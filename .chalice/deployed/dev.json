@@ -1,0 +1,37 @@
+{
+  "resources": [
+    {
+      "name": "default-role",
+      "resource_type": "iam_role",
+      "role_arn": "arn:aws:iam::897280129095:role/data-integration-transaction-generator-dev",
+      "role_name": "data-integration-transaction-generator-dev"
+    },
+    {
+      "name": "api_handler",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-west-2:897280129095:function:data-integration-transaction-generator-dev"
+    },
+    {
+      "name": "rest_api",
+      "resource_type": "rest_api",
+      "rest_api_id": "og7y92l5f3",
+      "rest_api_url": "https://og7y92l5f3.execute-api.us-west-2.amazonaws.com/api/"
+    },
+    {
+      "name": "api_gateway_custom_domain",
+      "resource_type": "domain_name",
+      "hosted_zone_id": "Z2OJLYMUO9EFXC",
+      "alias_domain_name": "d-q2355xn8r3.execute-api.us-west-2.amazonaws.com",
+      "certificate_arn": "arn:aws:acm:us-west-2:897280129095:certificate/db441879-d8a0-4fef-9f0a-8bc19bf3954d",
+      "security_policy": "TLS_1_2",
+      "domain_name": "ditg.dev.ecivis.com",
+      "api_mapping": [
+        {
+          "key": "/"
+        }
+      ]
+    }
+  ],
+  "schema_version": "2.0",
+  "backend": "api"
+}
