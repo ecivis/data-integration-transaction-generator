@@ -10,7 +10,7 @@ class GenerateTestCase(unittest.TestCase):
         self.assertEqual(len(transactions), 1)
         transaction = transactions[0]
         self.assertTrue(hasattr(transaction, "trans_id"))
-        self.assertEqual(len(transaction.trans_id), 10)
+        self.assertEqual(13, len(transaction.trans_id))
         self.assertTrue(hasattr(transaction, "trans_name"))
         self.assertFalse(hasattr(transaction, "slappy"))
 

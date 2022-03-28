@@ -1,51 +1,56 @@
-## Chalice Deploy
+## Chalice Deploy with Custom Hostname
+First grab the hosted zone identifier for dev.ecivis.com; it's needed later.
 ```shell
 export AWS_PROFILE=ecivis_non_prod
 export AWS_DEFAULT_REGION=us-west-2
+api_hostname="ditg.dev.ecivis.com"
 
 hosted_zone_id=$(aws route53 list-hosted-zones-by-name --dns-name dev.ecivis.com | \
-  jq -r '.HostedZones[] | select(.Name=="dev.ecivis.com.") | .Id' | grep -o -E '[^/]+$')
-
-chalice deploy
-
-aws acm request-certificate --domain-name "ditg.dev.ecivis.com" \
+  jq -r '.HostedZones[] | select(.Name=="'$api_hostname'.") | .Id' | grep -o -E '[^/]+$')
+```
+Create the certificate in ACM. Make note of the certificate ARN and update the `.chalice/config.json`
+```shell
+certificate_arn=$(aws acm request-certificate --domain-name "$api_hostname" \
     --validation-method DNS --idempotency-token 1234 \
-    --options CertificateTransparencyLoggingPreference=DISABLED
+    --options CertificateTransparencyLoggingPreference=ENABLED \
+    --output text --query CertificateArn)
+echo "certificate_arn: $certificate_arn"
 
-# Update .chalice/config.json with ACM certificate ARN
-
-# Create the certificate verification CNAME
-aws route53 change-resource-record-sets \
-    --hosted-zone-id $hosted_zone_id --change-batch \
-'{
-  "Changes": [
-    {
-      "Action": "CREATE",
-      "ResourceRecordSet": {
-        "Name": "_c08de96e2ad0641a94abec89e8a92d80.ditg.dev.ecivis.com.",
-        "Type": "CNAME",
-        "TTL": 300,
-        "ResourceRecords": [{"Value": "_fd5200016689d4608dc590e00c302ee5.yyqgzzsvtj.acm-validations.aws."}]
-      }
-    }
-  ]
-}'
-
-# Deploy the API Gateway changes
-chalice deploy
-
-# Create the Route 53 ALIAS for the API Gateway with values returned above
+validation_name=$(aws acm describe-certificate --certificate-arn $certificate_arn | jq -r '.Certificate.DomainValidationOptions[0].ResourceRecord.Name')
+validation_value=$(aws acm describe-certificate --certificate-arn $certificate_arn | jq -r '.Certificate.DomainValidationOptions[0].ResourceRecord.Value')
 aws route53 change-resource-record-sets --hosted-zone-id $hosted_zone_id --change-batch \
 '{
   "Changes": [
     {
       "Action": "CREATE",
       "ResourceRecordSet": {
-        "Name": "ditg.dev.ecivis.com",
+        "Name": "'$validation_name'",
+        "Type": "CNAME",
+        "TTL": 60,
+        "ResourceRecords": [{"Value": "'$validation_value'"}]
+      }
+    }
+  ]
+}'
+```
+
+Deploy the API Gateway changes. Make note of the `HostedZoneId` and `AliasDomainName` returned. Create the ALIAS record in Route 53.
+```shell
+chalice deploy
+
+alias_domain_name=""
+alias_target_hosted_zone_id=""
+aws route53 change-resource-record-sets --hosted-zone-id $hosted_zone_id --change-batch \
+'{
+  "Changes": [
+    {
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "'$api_hostname'",
         "Type": "A",
         "AliasTarget": {
-          "DNSName": "d-q2355xn8r3.execute-api.us-west-2.amazonaws.com",
-          "HostedZoneId": "Z2OJLYMUO9EFXC",
+          "DNSName": "'$alias_domain_name'",
+          "HostedZoneId": "'$alias_target_hosted_zone_id'",
           "EvaluateTargetHealth": false
         }
       }

@@ -14,15 +14,15 @@
     {
       "name": "rest_api",
       "resource_type": "rest_api",
-      "rest_api_id": "og7y92l5f3",
-      "rest_api_url": "https://og7y92l5f3.execute-api.us-west-2.amazonaws.com/api/"
+      "rest_api_id": "cqh8k5ikl7",
+      "rest_api_url": "https://cqh8k5ikl7.execute-api.us-west-2.amazonaws.com/api/"
     },
     {
       "name": "api_gateway_custom_domain",
       "resource_type": "domain_name",
       "hosted_zone_id": "Z2OJLYMUO9EFXC",
-      "alias_domain_name": "d-q2355xn8r3.execute-api.us-west-2.amazonaws.com",
-      "certificate_arn": "arn:aws:acm:us-west-2:897280129095:certificate/db441879-d8a0-4fef-9f0a-8bc19bf3954d",
+      "alias_domain_name": "d-9xyt0bn9t5.execute-api.us-west-2.amazonaws.com",
+      "certificate_arn": "arn:aws:acm:us-west-2:897280129095:certificate/19b03512-5774-467e-a730-a24aa1ceb2ac",
       "security_policy": "TLS_1_2",
       "domain_name": "ditg.dev.ecivis.com",
       "api_mapping": [

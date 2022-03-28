@@ -7,7 +7,7 @@
       "api_gateway_stage": "api",
       "api_gateway_custom_domain": {
           "domain_name": "ditg.dev.ecivis.com",
-          "certificate_arn": "arn:aws:acm:us-west-2:897280129095:certificate/db441879-d8a0-4fef-9f0a-8bc19bf3954d"
+          "certificate_arn": "arn:aws:acm:us-west-2:897280129095:certificate/19b03512-5774-467e-a730-a24aa1ceb2ac"
       }
     }
   }
